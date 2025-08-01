@@ -6,14 +6,14 @@ namespace BudgetApp.Api.Core.Entities
     /// </summary>
     public class ExpenseCategory : IAuditable
     {
-        public int expense_category_id { get; set; }
-        public int user_id { get; set; }
-        public string name { get; set; }
-        public DateTime created_at { get; set; }
-        public DateTime updated_at { get; set; }
+        public int Expense_Category_Id { get; set; }
+        public int User_Id { get; set; }
+        public string Name { get; set; } = null!;
+        public DateTime Created_At { get; set; }
+        public DateTime Updated_At { get; set; }
 
         // Navigation Properties
-        public User User { get; set; }
-        public ICollection<ExpenseItem> ExpenseItems { get; set; } = new List<ExpenseItem>();
+        public User User { get; set; } = null!;
+        public ICollection<ExpenseItem> ExpenseItems { get; set; } = [];
     }
 }

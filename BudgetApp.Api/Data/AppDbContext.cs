@@ -37,71 +37,71 @@ namespace BudgetApp.Api.Data
             // User Entity Configuration
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasKey(e => e.user_id);
-                entity.HasIndex(e => e.username).IsUnique();
-                entity.HasIndex(e => e.email).IsUnique();
-                entity.Property(e => e.password_hash).IsRequired();
+                entity.HasKey(e => e.User_Id);
+                entity.HasIndex(e => e.Username).IsUnique();
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.Property(e => e.Password_Hash).IsRequired();
             });
 
             // CreditCard Entity Configuration
             modelBuilder.Entity<CreditCard>(entity =>
             {
-                entity.HasKey(e => e.credit_card_id);
+                entity.HasKey(e => e.Credit_Card_Id);
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.CreditCards)
-                    .HasForeignKey(d => d.user_id)
+                    .HasForeignKey(d => d.User_Id)
                     .OnDelete(DeleteBehavior.Cascade); // If user is deleted, their cards are deleted.
             });
             
             // Transaction Entity Configuration
             modelBuilder.Entity<Transaction>(entity =>
             {
-                entity.HasKey(e => e.transaction_id);
+                entity.HasKey(e => e.Transaction_Id);
 
                 // A transaction is owned by one user
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Transactions)
-                    .HasForeignKey(d => d.user_id)
+                    .HasForeignKey(d => d.User_Id)
                     .OnDelete(DeleteBehavior.Cascade);
 
                 // A transaction can be linked to one income item
                 entity.HasOne(d => d.IncomeItem)
                     .WithOne(p => p.Transaction)
-                    .HasForeignKey<Transaction>(d => d.income_item_id)
+                    .HasForeignKey<Transaction>(d => d.Income_Item_Id)
                     .IsRequired(false); // Optional relationship
 
                 // A transaction can be linked to one expense item
                 entity.HasOne(d => d.ExpenseItem)
                     .WithOne(p => p.Transaction)
-                    .HasForeignKey<Transaction>(d => d.expense_item_id)
+                    .HasForeignKey<Transaction>(d => d.Expense_Item_Id)
                     .IsRequired(false);
 
                 // A transaction can be linked to one installment definition
                  entity.HasOne(d => d.InstallmentDefinition)
                     .WithOne(p => p.Transaction)
-                    .HasForeignKey<Transaction>(d => d.installment_definition_id)
+                    .HasForeignKey<Transaction>(d => d.Installment_Definition_Id)
                     .IsRequired(false);
             });
             
             // ExpenseItem Configuration
             modelBuilder.Entity<ExpenseItem>(entity =>
             {
-                entity.HasKey(e => e.expense_item_id);
+                entity.HasKey(e => e.Expense_Item_Id);
 
                 entity.HasOne(d => d.ExpenseCategory)
                     .WithMany(p => p.ExpenseItems)
-                    .HasForeignKey(d => d.expense_category_id)
+                    .HasForeignKey(d => d.Expense_Category_Id)
                     .OnDelete(DeleteBehavior.Restrict); // Prevent deleting a category if it has expenses.
             });
             
             // IncomeItem Configuration
             modelBuilder.Entity<IncomeItem>(entity =>
             {
-                entity.HasKey(e => e.income_item_id);
+                entity.HasKey(e => e.Income_Item_Id);
 
                 entity.HasOne(d => d.IncomeSource)
                     .WithMany(p => p.IncomeItems)
-                    .HasForeignKey(d => d.income_source_id)
+                    .HasForeignKey(d => d.Income_Source_Id)
                     .OnDelete(DeleteBehavior.Restrict); // Prevent deleting a source if it has incomes.
             });
         }
@@ -119,11 +119,11 @@ namespace BudgetApp.Api.Data
 
             foreach (var entityEntry in entries)
             {
-                ((IAuditable)entityEntry.Entity).updated_at = DateTime.UtcNow;
+                ((IAuditable)entityEntry.Entity).Updated_At = DateTime.UtcNow;
 
                 if (entityEntry.State == EntityState.Added)
                 {
-                    ((IAuditable)entityEntry.Entity).created_at = DateTime.UtcNow;
+                    ((IAuditable)entityEntry.Entity).Created_At = DateTime.UtcNow;
                 }
             }
 

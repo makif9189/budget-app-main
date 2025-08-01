@@ -6,17 +6,17 @@ namespace BudgetApp.Api.Core.Entities
     /// </summary>
     public class InstallmentDefinition : IAuditable
     {
-        public int installment_definition_id { get; set; }
-        public int credit_card_id { get; set; }
-        public string description { get; set; }
-        public decimal monthly_amount { get; set; }
-        public int total_installments { get; set; }
-        public DateTime first_installment_date { get; set; }
-        public DateTime created_at { get; set; }
-        public DateTime updated_at { get; set; }
+        public int Installment_Definition_Id { get; set; }
+        public int Credit_Card_Id { get; set; }
+        public string Description { get; set; } = null!;
+        public decimal Monthly_Amount { get; set; }
+        public int Total_Installments { get; set; }
+        public DateTime First_Installment_Date { get; set; }
+        public DateTime Created_At { get; set; }
+        public DateTime Updated_At { get; set; }
 
         // Navigation Property
-        public CreditCard CreditCard { get; set; }
-        public Transaction Transaction { get; set; }
+        public CreditCard CreditCard { get; set; } = new CreditCard();
+        public Transaction Transaction { get; set; } = new Transaction();
     }
 }

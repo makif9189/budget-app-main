@@ -6,16 +6,16 @@ namespace BudgetApp.Api.Core.Entities
     /// </summary>
     public class CardRateHistory
     {
-        public int rate_history_id { get; set; }
-        public int credit_card_id { get; set; }
-        public DateTime effective_date { get; set; }
-        public decimal interest_rate { get; set; }
-        public decimal kkdf_rate { get; set; }
-        public decimal bsmv_rate { get; set; }
-        public decimal minimum_payment_rate { get; set; }
-        public decimal? absolute_minimum_payment { get; set; }
+        public int Rate_History_Id { get; set; }
+        public int Credit_Card_Id { get; set; }
+        public DateTime Effective_Date { get; set; }
+        public decimal Interest_Rate { get; set; }
+        public decimal KKDF_Rate { get; set; }
+        public decimal Bsmv_Rate { get; set; }
+        public decimal Minimum_Payment_Rate { get; set; }
+        public decimal? Absolute_Minimum_Payment { get; set; }
 
         // Navigation Property
-        public CreditCard CreditCard { get; set; }
+        public CreditCard CreditCard { get; set; } = new CreditCard();
     }
 }

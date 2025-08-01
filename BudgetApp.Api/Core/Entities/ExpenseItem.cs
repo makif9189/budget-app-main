@@ -6,18 +6,18 @@ namespace BudgetApp.Api.Core.Entities
     /// </summary>
     public class ExpenseItem : IAuditable
     {
-        public int expense_item_id { get; set; }
-        public int user_id { get; set; }
-        public int expense_category_id { get; set; }
-        public decimal amount { get; set; }
-        public DateTime transaction_date { get; set; }
-        public string? description { get; set; }
-        public DateTime created_at { get; set; }
-        public DateTime updated_at { get; set; }
+        public int Expense_Item_Id { get; set; }
+        public int User_Id { get; set; }
+        public int Expense_Category_Id { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime Transaction_Date { get; set; }
+        public string? Description { get; set; }
+        public DateTime Created_At { get; set; }
+        public DateTime Updated_At { get; set; }
 
         // Navigation Properties
-        public User User { get; set; }
-        public ExpenseCategory ExpenseCategory { get; set; }
-        public Transaction Transaction { get; set; }
+        public User User { get; set; } = null!;
+        public ExpenseCategory ExpenseCategory { get; set; } = new ExpenseCategory();
+        public Transaction Transaction { get; set; } = new Transaction();
     }
 }

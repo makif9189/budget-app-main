@@ -32,9 +32,9 @@ namespace BudgetApp.Api.Services.Implementations
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId, user.user_id.ToString()),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.username),
-                new Claim(JwtRegisteredClaimNames.Email, user.email)
+                new Claim(JwtRegisteredClaimNames.NameId, user.User_Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email)
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);

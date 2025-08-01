@@ -6,14 +6,14 @@ namespace BudgetApp.Api.Core.Entities
     /// </summary>
     public class IncomeSource : IAuditable
     {
-        public int income_source_id { get; set; }
-        public int user_id { get; set; }
-        public string name { get; set; }
-        public DateTime created_at { get; set; }
-        public DateTime updated_at { get; set; }
+        public int Income_Source_Id { get; set; }
+        public int User_Id { get; set; }
+        public string Name { get; set; } = null!;
+        public DateTime Created_At { get; set; }
+        public DateTime Updated_At { get; set; }
 
         // Navigation Properties
-        public User User { get; set; }
-        public ICollection<IncomeItem> IncomeItems { get; set; } = new List<IncomeItem>();
+        public User User { get; set; } = null!;
+        public ICollection<IncomeItem> IncomeItems { get; set; } = [];
     }
 }

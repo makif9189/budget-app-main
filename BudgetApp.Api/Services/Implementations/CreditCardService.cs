@@ -23,14 +23,14 @@ namespace BudgetApp.Api.Services.Implementations
             // Map DTO to Entity
             var creditCard = new CreditCard
             {
-                user_id = userId,
-                name = creditCardDto.Name,
-                bank_name = creditCardDto.BankName,
-                last_4_digits = creditCardDto.Last4Digits,
-                statement_day = creditCardDto.StatementDay,
-                payment_due_date_offset = creditCardDto.PaymentDueDateOffset,
-                card_limit = creditCardDto.CardLimit,
-                expiration_date = creditCardDto.ExpirationDate
+                User_Id = userId,
+                Name = creditCardDto.Name,
+                Bank_Name = creditCardDto.BankName,
+                Last_4_Digits = creditCardDto.Last4Digits,
+                Statement_Day = creditCardDto.StatementDay,
+                Payment_Due_Date_Offset = creditCardDto.PaymentDueDateOffset,
+                Card_Limit = creditCardDto.CardLimit,
+                Expiration_Date = creditCardDto.ExpirationDate
             };
 
             await _creditCardRepository.AddAsync(creditCard);
@@ -65,7 +65,7 @@ namespace BudgetApp.Api.Services.Implementations
 
         public async Task<IEnumerable<CreditCardDto>> GetCreditCardsByUserIdAsync(int userId)
         {
-            var creditCards = await _creditCardRepository.FindAsync(c => c.user_id == userId);
+            var creditCards = await _creditCardRepository.FindAsync(c => c.User_Id == userId);
             return creditCards.Select(MapToDto);
         }
 
@@ -78,13 +78,13 @@ namespace BudgetApp.Api.Services.Implementations
             }
 
             // Update properties
-            creditCard.name = creditCardDto.Name;
-            creditCard.bank_name = creditCardDto.BankName;
-            creditCard.last_4_digits = creditCardDto.Last4Digits;
-            creditCard.statement_day = creditCardDto.StatementDay;
-            creditCard.payment_due_date_offset = creditCardDto.PaymentDueDateOffset;
-            creditCard.card_limit = creditCardDto.CardLimit;
-            creditCard.expiration_date = creditCardDto.ExpirationDate;
+            creditCard.Name = creditCardDto.Name;
+            creditCard.Bank_Name = creditCardDto.BankName;
+            creditCard.Last_4_Digits = creditCardDto.Last4Digits;
+            creditCard.Statement_Day = creditCardDto.StatementDay;
+            creditCard.Payment_Due_Date_Offset = creditCardDto.PaymentDueDateOffset;
+            creditCard.Card_Limit = creditCardDto.CardLimit;
+            creditCard.Expiration_Date = creditCardDto.ExpirationDate;
 
             // The 'updated_at' field will be handled by AppDbContext
             await _unitOfWork.CompleteAsync();
@@ -98,14 +98,14 @@ namespace BudgetApp.Api.Services.Implementations
         {
             return new CreditCardDto
             {
-                CreditCardId = creditCard.credit_card_id,
-                Name = creditCard.name,
-                BankName = creditCard.bank_name,
-                Last4Digits = creditCard.last_4_digits,
-                StatementDay = creditCard.statement_day,
-                PaymentDueDateOffset = creditCard.payment_due_date_offset,
-                CardLimit = creditCard.card_limit,
-                ExpirationDate = creditCard.expiration_date
+                CreditCardId = creditCard.Credit_Card_Id,
+                Name = creditCard.Name,
+                BankName = creditCard.Bank_Name,
+                Last4Digits = creditCard.Last_4_Digits,
+                StatementDay = creditCard.Statement_Day,
+                PaymentDueDateOffset = creditCard.Payment_Due_Date_Offset,
+                CardLimit = creditCard.Card_Limit,
+                ExpirationDate = creditCard.Expiration_Date
             };
         }
     }

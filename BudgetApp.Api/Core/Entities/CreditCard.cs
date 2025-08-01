@@ -6,22 +6,22 @@ namespace BudgetApp.Api.Core.Entities
     /// </summary>
     public class CreditCard : IAuditable
     {
-        public int credit_card_id { get; set; }
-        public int user_id { get; set; }
-        public string name { get; set; }
-        public string? bank_name { get; set; }
-        public string? last_4_digits { get; set; }
-        public int statement_day { get; set; }
-        public int payment_due_date_offset { get; set; }
-        public decimal? card_limit { get; set; }
-        public string? expiration_date { get; set; }
-        public DateTime created_at { get; set; }
-        public DateTime updated_at { get; set; }
+        public int Credit_Card_Id { get; set; }
+        public int User_Id { get; set; }
+        public string Name { get; set; } = null!;
+        public string? Bank_Name { get; set; }
+        public string? Last_4_Digits { get; set; }
+        public int Statement_Day { get; set; }
+        public int Payment_Due_Date_Offset { get; set; }
+        public decimal? Card_Limit { get; set; }
+        public string? Expiration_Date { get; set; }
+        public DateTime Created_At { get; set; }
+        public DateTime Updated_At { get; set; }
 
         // Navigation Properties
-        public User User { get; set; }
-        public ICollection<CardRateHistory> CardRateHistories { get; set; } = new List<CardRateHistory>();
-        public ICollection<InstallmentDefinition> InstallmentDefinitions { get; set; } = new List<InstallmentDefinition>();
-        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public User User { get; set; } = null!;
+        public ICollection<CardRateHistory> CardRateHistories { get; set; } = [];
+        public ICollection<InstallmentDefinition> InstallmentDefinitions { get; set; } = [];
+        public ICollection<Transaction> Transactions { get; set; } = [];
     }
 }

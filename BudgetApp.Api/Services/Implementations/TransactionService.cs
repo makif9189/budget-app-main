@@ -23,16 +23,16 @@ namespace BudgetApp.Api.Services.Implementations
         public async Task<IEnumerable<TransactionDto>> GetTransactionsByUserIdAsync(int userId, DateTime? startDate, DateTime? endDate)
         {
             var query = _context.Transactions
-                .Where(t => t.user_id == userId);
+                .Where(t => t.User_Id == userId);
 
             if (startDate.HasValue)
             {
-                query = query.Where(t => t.transaction_date >= startDate.Value);
+                query = query.Where(t => t.Transaction_Date >= startDate.Value);
             }
 
             if (endDate.HasValue)
             {
-                query = query.Where(t => t.transaction_date <= endDate.Value);
+                query = query.Where(t => t.Transaction_Date <= endDate.Value);
             }
 
             var transactions = await query
@@ -40,20 +40,20 @@ namespace BudgetApp.Api.Services.Implementations
                     .ThenInclude(ei => ei.ExpenseCategory)
                 .Include(t => t.IncomeItem)
                     .ThenInclude(ii => ii.IncomeSource)
-                .OrderByDescending(t => t.transaction_date)
+                .OrderByDescending(t => t.Transaction_Date)
                 .ToListAsync();
 
             // Map the complex entity to a simple DTO
             return transactions.Select(t => new TransactionDto
             {
-                TransactionId = t.transaction_id,
-                TransactionDate = t.transaction_date,
-                Type = t.type.ToString(),
-                Amount = t.amount,
-                Description = t.description,
-                CategoryOrSource = t.type == Core.Enums.TransactionTypeEnum.GELIR 
-                                   ? t.IncomeItem?.IncomeSource?.name ?? "Bilinmeyen Gelir"
-                                   : t.ExpenseItem?.ExpenseCategory?.name ?? "Genel Gider"
+                TransactionId = t.Transaction_Id,
+                TransactionDate = t.Transaction_Date,
+                Type = t.Type.ToString(),
+                Amount = t.Amount,
+                Description = t.Description ?? string.Empty,
+                CategoryOrSource = t.Type == Core.Enums.TransactionTypeEnum.GELIR 
+                                   ? t.IncomeItem?.IncomeSource?.Name ?? "Bilinmeyen Gelir"
+                                   : t.ExpenseItem?.ExpenseCategory?.Name ?? "Genel Gider"
             });
         }
     }

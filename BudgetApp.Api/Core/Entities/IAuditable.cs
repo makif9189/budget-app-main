@@ -8,11 +8,11 @@ namespace BudgetApp.Api.Core.Entities
         /// <summary>
         /// The date and time when the entity was created.
         /// </summary>
-        DateTime created_at { get; set; }
+        DateTime Created_At { get; set; }
 
         /// <summary>
         /// The date and time when the entity was last updated.
         /// </summary>
-        DateTime updated_at { get; set; }
+        DateTime Updated_At { get; set; }
     }
 }

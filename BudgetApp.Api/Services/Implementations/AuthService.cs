@@ -25,7 +25,7 @@ namespace BudgetApp.Api.Services.Implementations
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto registerDto)
         {
             // Check if user with the same email already exists
-            var existingUser = (await _userRepository.FindAsync(u => u.email == registerDto.Email.ToLower())).FirstOrDefault();
+            var existingUser = (await _userRepository.FindAsync(u => u.Email == registerDto.Email.ToLower())).FirstOrDefault();
             if (existingUser != null)
             {
                 throw new ApplicationException("Email is already taken.");
@@ -35,9 +35,9 @@ namespace BudgetApp.Api.Services.Implementations
 
             var user = new User
             {
-                username = registerDto.Username,
-                email = registerDto.Email.ToLower(),
-                password_hash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)))
+                Username = registerDto.Username,
+                Email = registerDto.Email.ToLower(),
+                Password_Hash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)))
             };
 
             await _userRepository.AddAsync(user);
@@ -45,22 +45,17 @@ namespace BudgetApp.Api.Services.Implementations
 
             return new AuthResponseDto
             {
-                UserId = user.user_id,
-                Username = user.username,
-                Email = user.email,
+                UserId = user.User_Id,
+                Username = user.Username,
+                Email = user.Email,
                 Token = _tokenService.CreateToken(user)
             };
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginDto loginDto)
         {
-            var user = (await _userRepository.FindAsync(u => u.email == loginDto.Email.ToLower())).FirstOrDefault();
+            var user = (await _userRepository.FindAsync(u => u.Email == loginDto.Email.ToLower())).FirstOrDefault() ?? throw new UnauthorizedAccessException("Invalid email or password.");
 
-            if (user == null)
-            {
-                throw new UnauthorizedAccessException("Invalid email or password.");
-            }
-            
             // This is a simplified hash check. In a real app, you would store the salt with the hash.
             // For this example, we assume the hash was created without a salt, which is not recommended for production.
             // A better approach: using a library like BCrypt.Net
@@ -71,9 +66,9 @@ namespace BudgetApp.Api.Services.Implementations
 
             return new AuthResponseDto
             {
-                UserId = user.user_id,
-                Username = user.username,
-                Email = user.email,
+                UserId = user.User_Id,
+                Username = user.Username,
+                Email = user.Email,
                 Token = _tokenService.CreateToken(user)
             };
         }

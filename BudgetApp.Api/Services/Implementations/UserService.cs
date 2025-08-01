@@ -34,10 +34,10 @@ namespace BudgetApp.Api.Services.Implementations
             // Map the User entity to a UserDto to avoid exposing the password hash.
             return new UserDto
             {
-                UserId = user.user_id,
-                Username = user.username,
-                Email = user.email,
-                CreatedAt = user.created_at
+                UserId = user.User_Id,
+                Username = user.Username,
+                Email = user.Email,
+                CreatedAt = user.Created_At
             };
         }
     }

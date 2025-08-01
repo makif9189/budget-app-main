@@ -25,11 +25,11 @@ namespace BudgetApp.Api.Services.Implementations
         {
             var expenseItem = new ExpenseItem
             {
-                user_id = userId,
-                expense_category_id = expenseDto.ExpenseCategoryId,
-                amount = expenseDto.Amount,
-                transaction_date = expenseDto.TransactionDate,
-                description = expenseDto.Description
+                User_Id = userId,
+                Expense_Category_Id = expenseDto.ExpenseCategoryId,
+                Amount = expenseDto.Amount,
+                Transaction_Date = expenseDto.TransactionDate,
+                Description = expenseDto.Description
             };
 
             await _expenseRepository.AddAsync(expenseItem);
@@ -38,12 +38,12 @@ namespace BudgetApp.Api.Services.Implementations
 
             var transaction = new Transaction
             {
-                user_id = userId,
-                transaction_date = expenseItem.transaction_date,
-                description = expenseItem.description,
-                amount = expenseItem.amount,
-                type = TransactionTypeEnum.HARCAMA, // Or GENEL_GIDER based on logic
-                expense_item_id = expenseItem.expense_item_id
+                User_Id = userId,
+                Transaction_Date = expenseItem.Transaction_Date,
+                Description = expenseItem.Description,
+                Amount = expenseItem.Amount,
+                Type = TransactionTypeEnum.HARCAMA, // Or GENEL_GIDER based on logic
+                Expense_Item_Id = expenseItem.Expense_Item_Id
             };
 
             await _transactionRepository.AddAsync(transaction);
@@ -52,11 +52,11 @@ namespace BudgetApp.Api.Services.Implementations
             // This mapping would be better with a library like AutoMapper
             return new ExpenseDto
             {
-                ExpenseItemId = expenseItem.expense_item_id,
-                ExpenseCategoryId = expenseItem.expense_category_id,
-                Amount = expenseItem.amount,
-                TransactionDate = expenseItem.transaction_date,
-                Description = expenseItem.description,
+                ExpenseItemId = expenseItem.Expense_Item_Id,
+                ExpenseCategoryId = expenseItem.Expense_Category_Id,
+                Amount = expenseItem.Amount,
+                TransactionDate = expenseItem.Transaction_Date,
+                Description = expenseItem.Description,
                 // CategoryName would need another repository call to get category details
                 CategoryName = "N/A" 
             };
@@ -64,15 +64,15 @@ namespace BudgetApp.Api.Services.Implementations
 
         public async Task<IEnumerable<ExpenseDto>> GetExpensesByUserIdAsync(int userId)
         {
-            var expenses = await _expenseRepository.FindAsync(e => e.user_id == userId);
+            var expenses = await _expenseRepository.FindAsync(e => e.User_Id == userId);
             // In a real app, you would join with ExpenseCategory to get the name
             // and map to ExpenseDto.
             return expenses.Select(e => new ExpenseDto {
-                 ExpenseItemId = e.expense_item_id,
-                 ExpenseCategoryId = e.expense_category_id,
-                 Amount = e.amount,
-                 TransactionDate = e.transaction_date,
-                 Description = e.description,
+                 ExpenseItemId = e.Expense_Item_Id,
+                 ExpenseCategoryId = e.Expense_Category_Id,
+                 Amount = e.Amount,
+                 TransactionDate = e.Transaction_Date,
+                 Description = e.Description,
                  CategoryName = "N/A"
             });
         }

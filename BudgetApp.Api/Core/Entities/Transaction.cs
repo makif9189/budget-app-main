@@ -8,24 +8,24 @@ namespace BudgetApp.Api.Core.Entities
     /// </summary>
     public class Transaction : IAuditable
     {
-        public int transaction_id { get; set; }
-        public int user_id { get; set; }
-        public DateTime transaction_date { get; set; }
-        public string? description { get; set; }
-        public decimal amount { get; set; }
-        public TransactionTypeEnum type { get; set; }
+        public int Transaction_Id { get; set; }
+        public int User_Id { get; set; }
+        public DateTime Transaction_Date { get; set; }
+        public string? Description { get; set; }
+        public decimal Amount { get; set; }
+        public TransactionTypeEnum Type { get; set; }
 
         // Foreign keys to specific transaction types (nullable)
-        public int? income_item_id { get; set; }
-        public int? expense_item_id { get; set; }
-        public int? credit_card_id { get; set; }
-        public int? installment_definition_id { get; set; }
+        public int? Income_Item_Id { get; set; }
+        public int? Expense_Item_Id { get; set; }
+        public int? Credit_Card_Id { get; set; }
+        public int? Installment_Definition_Id { get; set; }
 
-        public DateTime created_at { get; set; }
-        public DateTime updated_at { get; set; }
+        public DateTime Created_At { get; set; }
+        public DateTime Updated_At { get; set; }
 
         // Navigation Properties
-        public User User { get; set; }
+        public User User { get; set; } = null!;
         public IncomeItem? IncomeItem { get; set; }
         public ExpenseItem? ExpenseItem { get; set; }
         public CreditCard? CreditCard { get; set; }

@@ -25,12 +25,12 @@ namespace BudgetApp.Api.Services.Implementations
         {
             var incomeItem = new IncomeItem
             {
-                user_id = userId,
-                income_source_id = incomeDto.IncomeSourceId,
-                amount = incomeDto.Amount,
-                transaction_date = incomeDto.TransactionDate,
-                description = incomeDto.Description,
-                is_recurring = incomeDto.IsRecurring
+                User_Id = userId,
+                Income_Source_Id = incomeDto.IncomeSourceId,
+                Amount = incomeDto.Amount,
+                Transaction_Date = incomeDto.TransactionDate,
+                Description = incomeDto.Description,
+                Is_Recurring = incomeDto.IsRecurring
             };
 
             await _incomeRepository.AddAsync(incomeItem);
@@ -38,12 +38,12 @@ namespace BudgetApp.Api.Services.Implementations
 
             var transaction = new Transaction
             {
-                user_id = userId,
-                transaction_date = incomeItem.transaction_date,
-                description = incomeItem.description,
-                amount = incomeItem.amount,
-                type = TransactionTypeEnum.GELIR,
-                income_item_id = incomeItem.income_item_id
+                User_Id = userId,
+                Transaction_Date = incomeItem.Transaction_Date,
+                Description = incomeItem.Description,
+                Amount = incomeItem.Amount,
+                Type = TransactionTypeEnum.GELIR,
+                Income_Item_Id = incomeItem.Income_Item_Id
             };
 
             await _transactionRepository.AddAsync(transaction);
@@ -51,26 +51,26 @@ namespace BudgetApp.Api.Services.Implementations
 
             return new IncomeDto
             {
-                IncomeItemId = incomeItem.income_item_id,
-                IncomeSourceId = incomeItem.income_source_id,
-                Amount = incomeItem.amount,
-                TransactionDate = incomeItem.transaction_date,
-                Description = incomeItem.description,
-                IsRecurring = incomeItem.is_recurring,
+                IncomeItemId = incomeItem.Income_Item_Id,
+                IncomeSourceId = incomeItem.Income_Source_Id,
+                Amount = incomeItem.Amount,
+                TransactionDate = incomeItem.Transaction_Date,
+                Description = incomeItem.Description,
+                IsRecurring = incomeItem.Is_Recurring,
                 SourceName = "N/A" // Needs join/mapping
             };
         }
 
         public async Task<IEnumerable<IncomeDto>> GetIncomesByUserIdAsync(int userId)
         {
-            var incomes = await _incomeRepository.FindAsync(i => i.user_id == userId);
+            var incomes = await _incomeRepository.FindAsync(i => i.User_Id == userId);
             return incomes.Select(i => new IncomeDto {
-                IncomeItemId = i.income_item_id,
-                IncomeSourceId = i.income_source_id,
-                Amount = i.amount,
-                TransactionDate = i.transaction_date,
-                Description = i.description,
-                IsRecurring = i.is_recurring,
+                IncomeItemId = i.Income_Item_Id,
+                IncomeSourceId = i.Income_Source_Id,
+                Amount = i.Amount,
+                TransactionDate = i.Transaction_Date,
+                Description = i.Description,
+                IsRecurring = i.Is_Recurring,
                 SourceName = "N/A"
             });
         }
