@@ -9,18 +9,11 @@ namespace BudgetApp.Api.Services.Implementations
     /// <summary>
     /// Service for handling user authentication logic like registration and login.
     /// </summary>
-    public class AuthService : IAuthService
+    public class AuthService(IUnitOfWork unitOfWork, ITokenService tokenService, IRepository<User> userRepository) : IAuthService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ITokenService _tokenService;
-        private readonly IRepository<User> _userRepository;
-
-        public AuthService(IUnitOfWork unitOfWork, ITokenService tokenService, IRepository<User> userRepository)
-        {
-            _unitOfWork = unitOfWork;
-            _tokenService = tokenService;
-            _userRepository = userRepository;
-        }
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly ITokenService _tokenService = tokenService;
+        private readonly IRepository<User> _userRepository = userRepository;
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto registerDto)
         {

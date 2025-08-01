@@ -1,6 +1,8 @@
 using BudgetApp.Api.Core.DTOs;
 using BudgetApp.Api.Core.Entities;
 using BudgetApp.Api.Core.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetApp.Api.Services.Implementations
 {
@@ -53,7 +55,7 @@ namespace BudgetApp.Api.Services.Implementations
             return true;
         }
 
-        public async Task<CreditCardDto> GetCreditCardByIdAsync(int id)
+        public async Task<CreditCardDto?> GetCreditCardByIdAsync(int id)
         {
             var creditCard = await _creditCardRepository.GetByIdAsync(id);
             if (creditCard == null)

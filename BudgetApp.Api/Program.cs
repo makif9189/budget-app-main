@@ -14,12 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Get connection string from environment variable (provided by Codespaces Secret)
 // or fallback to appsettings for local development.
-var connectionString = builder.Configuration["NEON_CONNECTION_STRING"] 
-                       ?? builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new InvalidOperationException("Database connection string is not configured. Set NEON_CONNECTION_STRING as a Codespaces secret.");
+    throw new InvalidOperationException("Database connection string is not configured in appsettings.Development.json");
 }
 
 // Add DbContext
@@ -52,7 +51,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Secret"]))
+            // HATA BURADAYDI: "Secret" yerine "Key" olarak düzeltildi.
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
         };
     });
 builder.Services.AddAuthorization();

@@ -11,17 +11,14 @@ namespace BudgetApp.Api.Services.Implementations
     /// <summary>
     /// Service implementation for creating JSON Web Tokens (JWT).
     /// </summary>
-    public class TokenService : ITokenService
+    public class TokenService(IConfiguration config) : ITokenService
     {
-        private readonly SymmetricSecurityKey _key;
-        private readonly string _issuer;
-
-        public TokenService(IConfiguration config)
-        {
-            // Get secret key and issuer from appsettings.json
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Secret"]));
-            _issuer = config["JwtSettings:Issuer"];
-        }
+        private readonly SymmetricSecurityKey _key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(
+                config["JwtSettings:Secret"] ?? throw new ArgumentNullException("JwtSettings:Secret", "JWT secret key cannot be null.")
+            )
+        );
+        private readonly string? _issuer = config["JwtSettings:Issuer"];
 
         /// <summary>
         /// Creates a JWT for a given user.
@@ -32,9 +29,9 @@ namespace BudgetApp.Api.Services.Implementations
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId, user.User_Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
+                new(JwtRegisteredClaimNames.NameId, user.User_Id.ToString()),
+                new(JwtRegisteredClaimNames.UniqueName, user.Username),
+                new(JwtRegisteredClaimNames.Email, user.Email)
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
