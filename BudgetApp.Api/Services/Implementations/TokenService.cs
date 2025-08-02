@@ -15,7 +15,7 @@ namespace BudgetApp.Api.Services.Implementations
     {
         private readonly SymmetricSecurityKey _key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(
-                config["JwtSettings:Secret"] ?? throw new ArgumentNullException("JwtSettings:Secret", "JWT secret key cannot be null.")
+                config["JwtSettings:Key"] ?? throw new ArgumentNullException("JwtSettings:Key", "JWT secret key cannot be null.")
             )
         );
         private readonly string? _issuer = config["JwtSettings:Issuer"];

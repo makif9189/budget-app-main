@@ -7,14 +7,9 @@ namespace BudgetApp.Api.Services.Implementations
     /// <summary>
     /// Service for handling user-related business logic, such as retrieving user profiles.
     /// </summary>
-    public class UserService : IUserService
+    public class UserService(IRepository<User> userRepository) : IUserService
     {
-        private readonly IRepository<User> _userRepository;
-
-        public UserService(IRepository<User> userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        private readonly IRepository<User> _userRepository = userRepository;
 
         /// <summary>
         /// Retrieves a user by their ID and maps them to a safe DTO.
@@ -24,12 +19,7 @@ namespace BudgetApp.Api.Services.Implementations
         /// <exception cref="ApplicationException">Thrown if no user is found with the given ID.</exception>
         public async Task<UserDto> GetUserByIdAsync(int id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-
-            if (user == null)
-            {
-                throw new ApplicationException($"User with ID {id} not found.");
-            }
+            var user = await _userRepository.GetByIdAsync(id) ?? throw new ApplicationException($"User with ID {id} not found.");
 
             // Map the User entity to a UserDto to avoid exposing the password hash.
             return new UserDto
