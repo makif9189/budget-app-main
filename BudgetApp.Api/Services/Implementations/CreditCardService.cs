@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using BudgetApp.Api.Core.DTOs;
 using BudgetApp.Api.Core.Entities;
 using BudgetApp.Api.Core.Interfaces;
@@ -55,10 +56,10 @@ namespace BudgetApp.Api.Services.Implementations
             return true;
         }
 
-        public async Task<CreditCardDto?> GetCreditCardByIdAsync(int id)
+        public async Task<CreditCardDto?> GetCreditCardByIdAsync(int id,int userId)
         {
             var creditCard = await _creditCardRepository.GetByIdAsync(id);
-            if (creditCard == null)
+            if (creditCard == null || creditCard.User_Id!=userId)
             {
                 return null;
             }
@@ -71,7 +72,7 @@ namespace BudgetApp.Api.Services.Implementations
             return creditCards.Select(MapToDto);
         }
 
-        public async Task<bool> UpdateCreditCardAsync(int id, CreateCreditCardDto creditCardDto)
+        public async Task<bool> UpdateCreditCardAsync(int id, CreditCardDto creditCardDto)
         {
             var creditCard = await _creditCardRepository.GetByIdAsync(id);
             if (creditCard == null)

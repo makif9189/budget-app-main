@@ -9,7 +9,7 @@ namespace BudgetApp.Api.Api.Endpoints
     {
         public static void MapIncomeEndpoints(this IEndpointRouteBuilder app)
         {
-            var group = app.MapGroup("/api/incomes").RequireAuthorization();
+            var group = app.MapGroup("/api/incomes").RequireAuthorization().WithTags("Income");
 
             group.MapGet("/", async (IIncomeService incomeService, ClaimsPrincipal user) =>
             {

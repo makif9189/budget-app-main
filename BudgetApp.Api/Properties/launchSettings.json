@@ -5,16 +5,17 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
-      "applicationUrl": "http://localhost:5167",
+      "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "JWT_KEY": "ZWM5ZDM5YjUtY2U5Ny00MzM1LTg5ZGYtN2UwY2Y5Y2Q3YjM2LThjYjM4YjYyLTU4YjAtNGM2My1iZjk4LTg4ZDI5ZGI2YmU0ZQ=="
       }
     },
     "https": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
-      "applicationUrl": "https://localhost:7277;http://localhost:5167",
+      "applicationUrl": "https://localhost:5001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

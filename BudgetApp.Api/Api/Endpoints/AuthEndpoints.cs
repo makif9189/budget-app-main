@@ -24,7 +24,9 @@ namespace BudgetApp.Api.Api.Endpoints
                 {
                     return Results.BadRequest(new { message = ex.Message });
                 }
-            }).AllowAnonymous(); // Anyone can register
+            })
+            .AllowAnonymous() // Anyone can register
+            .WithTags("Authentication"); // <-- Bu endpoint'i "Authentication" grubuna ekler
 
             group.MapPost("/login", async (IAuthService authService, [FromBody] LoginDto loginDto) =>
             {
@@ -37,7 +39,9 @@ namespace BudgetApp.Api.Api.Endpoints
                 {
                     return Results.Unauthorized();
                 }
-            }).AllowAnonymous(); // Anyone can log in
+            })
+            .AllowAnonymous() // Anyone can register
+            .WithTags("Authentication"); // <-- Bu endpoint'i "Authentication" grubuna ekler
         }
     }
 }

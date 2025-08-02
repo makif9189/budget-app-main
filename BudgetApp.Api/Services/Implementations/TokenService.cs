@@ -13,11 +13,13 @@ namespace BudgetApp.Api.Services.Implementations
     /// </summary>
     public class TokenService(IConfiguration config) : ITokenService
     {
+
         private readonly SymmetricSecurityKey _key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(
-                config["JwtSettings:Key"] ?? throw new ArgumentNullException("JwtSettings:Key", "JWT secret key cannot be null.")
-            )
-        );
+                Encoding.UTF8.GetBytes(
+                    Environment.GetEnvironmentVariable("JWT_KEY") 
+                    ?? throw new ArgumentNullException("JWT_KEY", "JWT secret key cannot be null.")
+                )
+            );
         private readonly string? _issuer = config["JwtSettings:Issuer"];
 
         /// <summary>

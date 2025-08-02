@@ -9,7 +9,7 @@ namespace BudgetApp.Api.Api.Endpoints
     {
         public static void MapExpenseEndpoints(this IEndpointRouteBuilder app)
         {
-            var group = app.MapGroup("/api/expenses").RequireAuthorization();
+            var group = app.MapGroup("/api/expenses").RequireAuthorization().WithTags("Expense");
 
             group.MapGet("/", async (IExpenseService expenseService, ClaimsPrincipal user) =>
             {

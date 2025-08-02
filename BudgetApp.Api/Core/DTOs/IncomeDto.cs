@@ -33,7 +33,7 @@ namespace BudgetApp.Api.Core.DTOs
 
         [StringLength(500)]
         public string? Description { get; set; }
-        
+
         public bool IsRecurring { get; set; } = false;
     }
 }

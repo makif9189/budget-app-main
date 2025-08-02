@@ -7,6 +7,9 @@ using BudgetApp.Api.Core.Interfaces;
 using BudgetApp.Api.Data;
 using BudgetApp.Api.Data.Repositories;
 using BudgetApp.Api.Services.Implementations;
+using Microsoft.OpenApi.Models;
+using FluentValidation;
+using BudgetApp.Api.Api.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +43,15 @@ builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IIncomeService, IncomeService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateCreditCardDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateIncomeDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateExpenseDtoValidator>();
+
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+if (string.IsNullOrEmpty(jwtKey))
+    throw new InvalidOperationException("JWT_KEY environment variable is not set.");
+
 // Add Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -52,7 +64,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
             // HATA BURADAYDI: "Secret" yerine "Key" olarak düzeltildi.
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
         };
     });
 builder.Services.AddAuthorization();
@@ -60,7 +72,39 @@ builder.Services.AddAuthorization();
 
 // Add services for API documentation (Swagger)
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// --- SWAGGER YAPILANDIRMASI GÜNCELLENDİ ---
+builder.Services.AddSwaggerGen(options =>
+{
+    // API başlığı ve versiyonu
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "BudgetApp API", Version = "v1" });
+
+    // JWT Bearer token için güvenlik şemasını tanımla
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+
+    // Tanımlanan güvenlik şemasını tüm endpoint'lere uygula
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
 
 var app = builder.Build();
 

@@ -12,36 +12,76 @@ namespace BudgetApp.Api.Api.Endpoints
     {
         public static void MapCreditCardEndpoints(this IEndpointRouteBuilder app)
         {
-            var group = app.MapGroup("/api/credit-cards").RequireAuthorization(); // Secure this whole group
+            // Bütün endpoint grubunu tek seferde koruma altına al ve etiketle.
+            var group = app.MapGroup("/api/credit-cards")
+                           .RequireAuthorization()
+                           .WithTags("Credit Cards");
 
+            // Sadece o anki giriş yapmış kullanıcının kredi kartlarını getirir.
             group.MapGet("/", async (ICreditCardService cardService, ClaimsPrincipal user) =>
             {
-                var userId = int.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier));
+                // Token'dan kullanıcı ID'sini güvenli bir şekilde al.
+                var userIdValue = user.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userIdValue) || !int.TryParse(userIdValue, out var userId))
+                {
+                    return Results.Unauthorized();
+                }
+
                 var cards = await cardService.GetCreditCardsByUserIdAsync(userId);
                 return Results.Ok(cards);
             });
 
-            group.MapGet("/{id:int}", async (ICreditCardService cardService, int id) =>
+            // Belirli bir kredi kartını ID ile getirir.
+            group.MapGet("/{id:int}", async (ICreditCardService cardService, int id,ClaimsPrincipal user) =>
             {
-                var card = await cardService.GetCreditCardByIdAsync(id);
+                var userIdValue = user.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userIdValue) || !int.TryParse(userIdValue, out var userId))
+                {
+                    return Results.Unauthorized();
+                }
+                // Servis katmanında bu kartın istenen kullanıcıya ait olduğu kontrol edilmelidir.
+                var card = await cardService.GetCreditCardByIdAsync(id,userId);
                 return card is not null ? Results.Ok(card) : Results.NotFound();
-            });
+            })
+            .WithName("GetCreditCardById"); // CreatedAtRoute'un çalışması için isimlendirme yapıldı.
 
+            // Yeni bir kredi kartı oluşturur.
             group.MapPost("/", async (ICreditCardService cardService, [FromBody] CreateCreditCardDto cardDto, ClaimsPrincipal user) =>
             {
-                var userId = int.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier));
+                var userIdValue = user.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userIdValue) || !int.TryParse(userIdValue, out var userId))
+                {
+                    return Results.Unauthorized();
+                }
+
+                // Servis metoduna userId gönderilerek kartın doğru kullanıcıya atanması sağlanır.
                 var newCard = await cardService.CreateCreditCardAsync(userId, cardDto);
-                return Results.CreatedAtRoute(null, new { id = newCard.CreditCardId }, newCard);
+                
+                // İsimlendirilmiş route'a referans vererek 201 Created yanıtı döndür.
+                return Results.CreatedAtRoute("GetCreditCardById", new { id = newCard.CreditCardId }, newCard);
             });
 
-            group.MapPut("/{id:int}", async (ICreditCardService cardService, int id, [FromBody] CreateCreditCardDto cardDto) =>
+            // Mevcut bir kredi kartını günceller.
+            group.MapPut("/{id:int}", async (ICreditCardService cardService, int id, [FromBody] CreditCardDto cardDto, ClaimsPrincipal user) =>
             {
-                var success = await cardService.UpdateCreditCardAsync(id, cardDto);
-                return success ? Results.NoContent() : Results.NotFound();
+                var userIdValue = user.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userIdValue) || !int.TryParse(userIdValue, out var userId))
+                {
+                    return Results.Unauthorized();
+                }
+
+                var updatedCard = await cardService.UpdateCreditCardAsync(id, cardDto);
+                return Results.Ok(updatedCard);
             });
 
-            group.MapDelete("/{id:int}", async (ICreditCardService cardService, int id) =>
+            // Bir kredi kartını siler.
+            group.MapDelete("/{id:int}", async (ICreditCardService cardService, int id,ClaimsPrincipal user) =>
             {
+                var userIdValue = user.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userIdValue) || !int.TryParse(userIdValue, out var userId))
+                {
+                    return Results.Unauthorized();
+                }
                 var success = await cardService.DeleteCreditCardAsync(id);
                 return success ? Results.NoContent() : Results.NotFound();
             });

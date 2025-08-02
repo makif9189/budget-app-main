@@ -7,7 +7,7 @@ namespace BudgetApp.Api.Api.Endpoints
     {
         public static void MapTransactionEndpoints(this IEndpointRouteBuilder app)
         {
-            var group = app.MapGroup("/api/transactions").RequireAuthorization();
+            var group = app.MapGroup("/api/transactions").RequireAuthorization().WithTags("Transaction");
 
             group.MapGet("/", async (ITransactionService transactionService, ClaimsPrincipal user, DateTime? startDate, DateTime? endDate) =>
             {

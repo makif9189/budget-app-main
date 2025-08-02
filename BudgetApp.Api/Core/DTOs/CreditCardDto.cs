@@ -23,13 +23,13 @@ namespace BudgetApp.Api.Core.DTOs
     public class CreateCreditCardDto
     {
         [Required]
-        [StringLength(100)]
+        [StringLength(100, MinimumLength = 3)]
         public string Name { get; set; }
 
         [StringLength(100)]
         public string? BankName { get; set; }
 
-        [StringLength(4)]
+        [RegularExpression(@"^\d{4}$", ErrorMessage = "Last 4 digits must be exactly 4 numbers.")]
         public string? Last4Digits { get; set; }
 
         [Required]
@@ -40,9 +40,10 @@ namespace BudgetApp.Api.Core.DTOs
         [Range(0, 30)]
         public int PaymentDueDateOffset { get; set; }
 
+        [Range(0, double.MaxValue)]
         public decimal? CardLimit { get; set; }
 
-        [StringLength(5)] // MM/YY
+        [RegularExpression(@"^(0[1-9]|1[0-2])\/\d{2}$", ErrorMessage = "Expiration date must be in MM/YY format.")]
         public string? ExpirationDate { get; set; }
     }
 }
