@@ -1,13 +1,10 @@
 using BudgetApp.Api.Core.DTOs;
+using BudgetApp.Api.Core.DTOs.Common;
 
-namespace BudgetApp.Api.Core.Interfaces
+namespace BudgetApp.Api.Core.Interfaces.Services;
+
+public interface IIncomeService
 {
-    /// <summary>
-    /// Defines the contract for income related services.
-    /// </summary>
-    public interface IIncomeService
-    {
-        Task<IEnumerable<IncomeDto>> GetIncomesByUserIdAsync(int userId);
-        Task<IncomeDto> CreateIncomeAsync(int userId, CreateIncomeDto incomeDto);
-    }
+    Task<ApiResponse<IEnumerable<IncomeDto>>> GetIncomesByUserIdAsync(int userId);
+    Task<ApiResponse<IncomeDto>> CreateIncomeAsync(int userId, CreateIncomeDto incomeDto);
 }

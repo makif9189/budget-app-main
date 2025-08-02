@@ -1,18 +1,7 @@
-namespace BudgetApp.Api.Core.Entities
-{
-    /// <summary>
-    /// Interface to mark entities that should have creation and update timestamps.
-    /// </summary>
-    public interface IAuditable
-    {
-        /// <summary>
-        /// The date and time when the entity was created.
-        /// </summary>
-        DateTime Created_At { get; set; }
+namespace BudgetApp.Api.Core.Entities;
 
-        /// <summary>
-        /// The date and time when the entity was last updated.
-        /// </summary>
-        DateTime Updated_At { get; set; }
-    }
+public interface IAuditable
+{
+    DateTime CreatedAt { get; set; }
+    DateTime UpdatedAt { get; set; }
 }

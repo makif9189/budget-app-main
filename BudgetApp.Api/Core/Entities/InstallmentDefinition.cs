@@ -1,35 +1,37 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BudgetApp.Api.Core.Entities
-{
-    /// <summary>
-    /// Represents a definition for an installment-based purchase.
-    /// Corresponds to the 'installment_definitions' table.
-    /// </summary>
-    [Table("installment_definitions")]
-    public class InstallmentDefinition : IAuditable
-    {
-        [Key]
-        [Column("installment_definition_id")]
-        public int Installment_Definition_Id { get; set; }
-        [Column("credit_card_id")]
-        public int Credit_Card_Id { get; set; }
-        [Column("description")]
-        public string Description { get; set; } = null!;
-        [Column("monthly_amount")]
-        public decimal Monthly_Amount { get; set; }
-        [Column("total_installments")]
-        public int Total_Installments { get; set; }
-        [Column("first_installment_date")]
-        public DateTime First_Installment_Date { get; set; }
-        [Column("created_at")]
-        public DateTime Created_At { get; set; }
-        [Column("updated_at")]
-        public DateTime Updated_At { get; set; }
+namespace BudgetApp.Api.Core.Entities;
 
-        // Navigation Property
-        public CreditCard CreditCard { get; set; } = new CreditCard();
-        public Transaction Transaction { get; set; } = new Transaction();
-    }
+[Table("installment_definitions")]
+public class InstallmentDefinition : IAuditable
+{
+    [Key]
+    [Column("installment_definition_id")]
+    public int InstallmentDefinitionId { get; set; }
+    
+    [Column("credit_card_id")]
+    public int CreditCardId { get; set; }
+    
+    [Column("description")]
+    public string Description { get; set; } = null!;
+    
+    [Column("monthly_amount")]
+    public decimal MonthlyAmount { get; set; }
+    
+    [Column("total_installments")]
+    public int TotalInstallments { get; set; }
+    
+    [Column("first_installment_date")]
+    public DateTime FirstInstallmentDate { get; set; }
+    
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; }
+    
+    [Column("updated_at")]
+    public DateTime UpdatedAt { get; set; }
+
+    // Navigation Properties
+    public CreditCard CreditCard { get; set; } = null!;
+    public Transaction? Transaction { get; set; }
 }

@@ -1,13 +1,10 @@
 using BudgetApp.Api.Core.DTOs;
+using BudgetApp.Api.Core.DTOs.Common;
 
-namespace BudgetApp.Api.Core.Interfaces
+namespace BudgetApp.Api.Core.Interfaces.Services;
+
+public interface IExpenseService
 {
-    /// <summary>
-    /// Defines the contract for expense related services.
-    /// </summary>
-    public interface IExpenseService
-    {
-        Task<IEnumerable<ExpenseDto>> GetExpensesByUserIdAsync(int userId);
-        Task<ExpenseDto> CreateExpenseAsync(int userId, CreateExpenseDto expenseDto);
-    }
+    Task<ApiResponse<IEnumerable<ExpenseDto>>> GetExpensesByUserIdAsync(int userId);
+    Task<ApiResponse<ExpenseDto>> CreateExpenseAsync(int userId, CreateExpenseDto expenseDto);
 }

@@ -1,17 +1,9 @@
 using BudgetApp.Api.Core.DTOs;
+using BudgetApp.Api.Core.DTOs.Common;
 
-namespace BudgetApp.Api.Core.Interfaces
+namespace BudgetApp.Api.Core.Interfaces.Services;
+
+public interface IUserService
 {
-    /// <summary>
-    /// Defines the contract for user-related business logic.
-    /// </summary>
-    public interface IUserService
-    {
-        /// <summary>
-        /// Gets a user by their ID.
-        /// </summary>
-        /// <param name="id">The user's ID.</param>
-        /// <returns>A DTO representing the user.</returns>
-        Task<UserDto> GetUserByIdAsync(int id);
-    }
+    Task<ApiResponse<UserDto>> GetUserByIdAsync(int id);
 }

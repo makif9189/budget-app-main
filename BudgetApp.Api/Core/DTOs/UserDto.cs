@@ -1,14 +1,9 @@
-namespace BudgetApp.Api.Core.DTOs
+namespace BudgetApp.Api.Core.DTOs;
+
+public class UserDto
 {
-    /// <summary>
-    /// DTO for exposing user information safely to the client.
-    /// Excludes sensitive information like the password hash.
-    /// </summary>
-    public class UserDto
-    {
-        public int UserId { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public DateTime CreatedAt { get; set; }
-    }
+    public int UserId { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
 }

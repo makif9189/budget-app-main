@@ -1,19 +1,9 @@
 using BudgetApp.Api.Core.DTOs;
+using BudgetApp.Api.Core.DTOs.Common;
 
-namespace BudgetApp.Api.Core.Interfaces
+namespace BudgetApp.Api.Core.Interfaces.Services;
+
+public interface ITransactionService
 {
-    /// <summary>
-    /// Defines the contract for services that handle financial transactions.
-    /// </summary>
-    public interface ITransactionService
-    {
-        /// <summary>
-        /// Gets all transactions for a specific user, optionally filtered by date.
-        /// </summary>
-        /// <param name="userId">The user's ID.</param>
-        /// <param name="startDate">The start date of the filter range.</param>
-        /// <param name="endDate">The end date of the filter range.</param>
-        /// <returns>A collection of unified transaction DTOs.</returns>
-        Task<IEnumerable<TransactionDto>> GetTransactionsByUserIdAsync(int userId, DateTime? startDate, DateTime? endDate);
-    }
+    Task<ApiResponse<IEnumerable<TransactionDto>>> GetTransactionsByUserIdAsync(int userId, DateTime? startDate, DateTime? endDate);
 }

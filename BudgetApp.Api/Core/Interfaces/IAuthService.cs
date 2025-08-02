@@ -1,24 +1,10 @@
 using BudgetApp.Api.Core.DTOs;
+using BudgetApp.Api.Core.DTOs.Common;
 
-namespace BudgetApp.Api.Core.Interfaces
+namespace BudgetApp.Api.Core.Interfaces.Services;
+
+public interface IAuthService
 {
-    /// <summary>
-    /// Defines the contract for authentication services.
-    /// </summary>
-    public interface IAuthService
-    {
-        /// <summary>
-        /// Registers a new user in the system.
-        /// </summary>
-        /// <param name="registerDto">The user registration data.</param>
-        /// <returns>An authentication response with user details and a JWT upon success.</returns>
-        Task<AuthResponseDto> RegisterAsync(RegisterDto registerDto);
-
-        /// <summary>
-        /// Logs a user into the system.
-        /// </summary>
-        /// <param name="loginDto">The user login credentials.</param>
-        /// <returns>An authentication response with user details and a JWT upon success.</returns>
-        Task<AuthResponseDto> LoginAsync(LoginDto loginDto);
-    }
+    Task<ApiResponse<AuthResponseDto>> RegisterAsync(RegisterDto registerDto);
+    Task<ApiResponse<AuthResponseDto>> LoginAsync(LoginDto loginDto);
 }
