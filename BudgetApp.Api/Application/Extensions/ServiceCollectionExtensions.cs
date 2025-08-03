@@ -30,7 +30,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IValidator<CreateIncomeDto>, CreateIncomeDtoValidator>();
 
         // Add AutoMapper with assembly scanning
-        services.AddAutoMapper(typeof(MappingProfile).Assembly);
+        services.AddAutoMapper(cfg => { cfg.AddProfile<MappingProfile>(); });
         return services;
     }
 }

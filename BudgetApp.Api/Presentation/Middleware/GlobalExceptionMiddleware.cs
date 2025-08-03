@@ -2,7 +2,8 @@ using System.Net;
 using System.Text.Json;
 using BudgetApp.Api.Core.DTOs.Common;
 using BudgetApp.Api.Core.Exceptions;
-using FluentValidation;
+using CoreValidationException = BudgetApp.Api.Core.Exceptions.ValidationException;
+using FluentValidationException = FluentValidation.ValidationException;
 
 namespace BudgetApp.Api.Presentation.Middleware;
 
@@ -36,14 +37,14 @@ public class GlobalExceptionMiddleware
         
         var response = exception switch
         {
-            ValidationException validationEx => new ApiResponse
+            CoreValidationException validationEx => new ApiResponse
             {
                 Success = false,
                 Message = "Validation failed",
                 Errors = validationEx.Errors.SelectMany(x => x.Value).ToList()
             },
             
-            FluentValidation.ValidationException fluentValidationEx => new ApiResponse
+            FluentValidationException fluentValidationEx => new ApiResponse
             {
                 Success = false,
                 Message = "Validation failed",
@@ -88,8 +89,8 @@ public class GlobalExceptionMiddleware
 
         context.Response.StatusCode = exception switch
         {
-            ValidationException => (int)HttpStatusCode.BadRequest,
-            FluentValidation.ValidationException => (int)HttpStatusCode.BadRequest,
+            CoreValidationException => (int)HttpStatusCode.BadRequest,
+            FluentValidationException => (int)HttpStatusCode.BadRequest,
             UnauthorizedException => (int)HttpStatusCode.Unauthorized,
             NotFoundException => (int)HttpStatusCode.NotFound,
             BusinessException => (int)HttpStatusCode.BadRequest,

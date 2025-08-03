@@ -23,7 +23,6 @@ public class Transaction : IAuditable
     
     [Column("type")]
     public TransactionTypeEnum Type { get; set; }
-    
     [Column("income_item_id")]
     public int? IncomeItemId { get; set; }
     

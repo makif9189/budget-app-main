@@ -26,7 +26,7 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         // PostgreSQL enum mapping
-        modelBuilder.HasPostgresEnum<TransactionTypeEnum>();
+        modelBuilder.HasPostgresEnum<TransactionTypeEnum>("transaction_type_enum");
 
         ConfigureUserEntity(modelBuilder);
         ConfigureCreditCardEntity(modelBuilder);
@@ -178,6 +178,9 @@ public class AppDbContext : DbContext
                 
             entity.Property(e => e.Description)
                 .HasMaxLength(500);
+                
+            entity.Property(e => e.Type)
+            .HasColumnType("transaction_type_enum");
 
             entity.HasOne(d => d.User)
                 .WithMany(p => p.Transactions)

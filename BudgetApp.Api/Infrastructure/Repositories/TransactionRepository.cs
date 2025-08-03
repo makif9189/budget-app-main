@@ -14,9 +14,9 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
     public async Task<IEnumerable<Transaction>> GetByUserIdWithDetailsAsync(int userId, DateTime? startDate, DateTime? endDate)
     {
         var query = _dbSet
-            .Include(t => t.ExpenseItem)
-                .ThenInclude(ei => ei.ExpenseCategory)
-            .Include(t => t.IncomeItem)
+            //.Include(t => t.ExpenseItem!)
+            //    .ThenInclude(ei => ei.ExpenseCategory)
+            .Include(t => t.IncomeItem!)
                 .ThenInclude(ii => ii.IncomeSource)
             .Include(t => t.CreditCard)
             .Include(t => t.InstallmentDefinition)

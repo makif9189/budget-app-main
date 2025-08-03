@@ -8,6 +8,11 @@ using BudgetApp.Api.Infrastructure.Extensions;
 using BudgetApp.Api.Application.Extensions;
 using BudgetApp.Api.Core.Constants;
 using Serilog;
+using BudgetApp.Api.Presentation.Extensions;
+using Npgsql;
+using BudgetApp.Api.Core.Enums;
+
+NpgsqlConnection.GlobalTypeMapper.MapEnum<TransactionTypeEnum>("transaction_type_enum");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +23,7 @@ builder.Host.UseSerilog((context, configuration) =>
 // Get configuration
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Database connection string is not configured.");
+
 
 var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY")
     ?? throw new InvalidOperationException("JWT_KEY environment variable is not set.");
