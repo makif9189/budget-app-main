@@ -90,8 +90,12 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description ?? string.Empty))
             .ForMember(dest => dest.CategoryOrSource, opt => opt.MapFrom(src =>
-                src.Type == 1
-                    ? (src.IncomeItem != null ? src.IncomeItem.IncomeSource.Name : "Bilinmeyen Gelir")
-                    : (src.ExpenseItem != null ? src.ExpenseItem.ExpenseCategory.Name : "Genel Gider")));
+                src.Type == 1 && src.IncomeItem != null && src.IncomeItem.IncomeSource != null
+                    ? src.IncomeItem.IncomeSource.Name
+                    : (src.Type == 2 && src.ExpenseItem != null && src.ExpenseItem.ExpenseCategory != null
+                    ? src.ExpenseItem.ExpenseCategory.Name
+                    : "Diğer")));
+                    //? (src.IncomeItem != null ? src.IncomeItem.IncomeSource.Name : "Bilinmeyen Gelir")
+                    //: (src.ExpenseItem != null ? src.ExpenseItem.ExpenseCategory.Name : "Genel Gider")));
     }
 }

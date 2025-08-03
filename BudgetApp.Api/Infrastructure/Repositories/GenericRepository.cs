@@ -23,12 +23,12 @@ public class GenericRepository<T> : IRepository<T> where T : class
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await _dbSet.ToListAsync();
+        return await _dbSet.AsNoTracking().ToListAsync();
     }
 
     public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
     {
-        return await _dbSet.Where(predicate).ToListAsync();
+        return await _dbSet.Where(predicate).AsNoTracking().ToListAsync();
     }
 
     public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
@@ -38,7 +38,7 @@ public class GenericRepository<T> : IRepository<T> where T : class
 
     public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
     {
-        return await _dbSet.AnyAsync(predicate);
+        return await _dbSet.AsNoTracking().AnyAsync(predicate);
     }
 
     public async Task AddAsync(T entity)
