@@ -1,95 +1,82 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using BudgetApp.Api.Api.Endpoints;
-using BudgetApp.Api.Core.Interfaces;
-using BudgetApp.Api.Data;
-using BudgetApp.Api.Data.Repositories;
-using BudgetApp.Api.Services.Implementations;
 using Microsoft.OpenApi.Models;
-using FluentValidation;
-using BudgetApp.Api.Api.Validators;
+using BudgetApp.Api.Presentation.Endpoints;
+using BudgetApp.Api.Presentation.Middleware;
+using BudgetApp.Api.Infrastructure.Extensions;
+using BudgetApp.Api.Application.Extensions;
+using BudgetApp.Api.Core.Constants;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Add services to the dependency injection container.
+// Add Serilog
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
 
-// Get connection string from environment variable (provided by Codespaces Secret)
-// or fallback to appsettings for local development.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Get configuration
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Database connection string is not configured.");
 
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("Database connection string is not configured in appsettings.Development.json");
-}
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY")
+    ?? throw new InvalidOperationException("JWT_KEY environment variable is not set.");
 
-// Add DbContext
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    options.UseNpgsql(connectionString);
-});
+// Add services to the container
+builder.Services.AddInfrastructureServices(connectionString);
+builder.Services.AddApplicationServices();
 
-// Add Repositories and Unit of Work
-builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-// Add Application Services
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ICreditCardService, CreditCardService>();
-builder.Services.AddScoped<IExpenseService, ExpenseService>();
-builder.Services.AddScoped<IIncomeService, IncomeService>();
-builder.Services.AddScoped<ITransactionService, TransactionService>();
-
-builder.Services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateCreditCardDtoValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateIncomeDtoValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateExpenseDtoValidator>();
-
-var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
-if (string.IsNullOrEmpty(jwtKey))
-    throw new InvalidOperationException("JWT_KEY environment variable is not set.");
-
-// Add Authentication
+// Add Authentication & Authorization
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidateAudience = false,
+            ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-            // HATA BURADAYDI: "Secret" yerine "Key" olarak düzeltildi.
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+            ValidAudience = builder.Configuration["JwtSettings:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            ClockSkew = TimeSpan.Zero // Remove default 5 minute tolerance
         };
+
+        // Add custom claim mapping
+        options.MapInboundClaims = false; // Don't map claims to Microsoft format
+        options.TokenValidationParameters.NameClaimType = ApplicationConstants.Claims.Username;
+        options.TokenValidationParameters.RoleClaimType = "role";
     });
+
 builder.Services.AddAuthorization();
 
-
-// Add services for API documentation (Swagger)
+// Add API Documentation
 builder.Services.AddEndpointsApiExplorer();
-// --- SWAGGER YAPILANDIRMASI GÜNCELLENDİ ---
 builder.Services.AddSwaggerGen(options =>
 {
-    // API başlığı ve versiyonu
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "BudgetApp API", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo 
+    { 
+        Title = "Secure Budget App API", 
+        Version = "v1",
+        Description = "A secure budget management API built with .NET 9",
+        Contact = new OpenApiContact
+        {
+            Name = "Budget App Team",
+            Email = "support@budgetapp.com"
+        }
+    });
 
-    // JWT Bearer token için güvenlik şemasını tanımla
+    // Add JWT Bearer authentication to Swagger
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Description = "Please enter a valid token",
+        Description = "Please enter a valid JWT token",
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
         BearerFormat = "JWT",
         Scheme = "Bearer"
     });
 
-    // Tanımlanan güvenlik şemasını tüm endpoint'lere uygula
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -101,27 +88,63 @@ builder.Services.AddSwaggerGen(options =>
                     Id = "Bearer"
                 }
             },
-            new string[]{}
+            Array.Empty<string>()
         }
+    });
+
+    // Enable annotations for better documentation
+    options.EnableAnnotations();
+});
+
+// Add CORS (if needed)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000", "https://localhost:3000") // React app
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
+// Add health checks
+builder.Services.AddHealthChecks()
+    .AddNpgSql(connectionString);
+
 var app = builder.Build();
 
-// 2. Configure the HTTP request pipeline.
-
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Secure Budget App API v1");
+        c.DisplayRequestDuration();
+        c.EnableTryItOutByDefault();
+    });
 }
 
+// Add security headers
+app.UseSecurityHeaders();
+
+// Add global exception handling
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
+// Add request logging
+app.UseSerilogRequestLogging();
+
 app.UseHttpsRedirection();
+app.UseCors("AllowSpecificOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// 3. Map endpoints
+// Add health check endpoint
+app.MapHealthChecks("/health");
+
+// Map API endpoints
 app.MapAuthEndpoints();
 app.MapCreditCardEndpoints();
 app.MapExpenseEndpoints();
