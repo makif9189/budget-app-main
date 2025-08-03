@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using BudgetApp.Api.Core.Entities;
-using BudgetApp.Api.Core.Enums;
 
 namespace BudgetApp.Api.Infrastructure.Data;
 
@@ -25,14 +24,25 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // PostgreSQL enum mapping
-        modelBuilder.HasPostgresEnum<TransactionTypeEnum>("transaction_type_enum");
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties())
+            {
+                if (property.ClrType == typeof(DateTime) || property.ClrType == typeof(DateTime?))
+                {
+                    property.SetValueConverter(new Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<DateTime, DateTime>(
+                        v => v.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(v, DateTimeKind.Utc) : v.ToUniversalTime(),
+                        v => DateTime.SpecifyKind(v, DateTimeKind.Utc)));
+                }
+            }
+        }
 
         ConfigureUserEntity(modelBuilder);
         ConfigureCreditCardEntity(modelBuilder);
         ConfigureExpenseEntities(modelBuilder);
         ConfigureIncomeEntities(modelBuilder);
         ConfigureTransactionEntity(modelBuilder);
+        ConfigureTransactionTypeEntity(modelBuilder);
         ConfigureInstallmentEntity(modelBuilder);
         ConfigureCardRateHistoryEntity(modelBuilder);
     }
@@ -172,15 +182,16 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Transaction>(entity =>
         {
             entity.HasKey(e => e.TransactionId);
-            
+
             entity.Property(e => e.Amount)
                 .HasPrecision(18, 2);
-                
+
             entity.Property(e => e.Description)
                 .HasMaxLength(500);
-                
+
             entity.Property(e => e.Type)
-            .HasColumnType("transaction_type_enum");
+                .HasConversion<int>()
+                .IsRequired();
 
             entity.HasOne(d => d.User)
                 .WithMany(p => p.Transactions)
@@ -206,6 +217,23 @@ public class AppDbContext : DbContext
                 .WithOne(p => p.Transaction)
                 .HasForeignKey<Transaction>(d => d.InstallmentDefinitionId)
                 .IsRequired(false);
+            
+            entity.HasOne(d => d.TransactionType)
+                .WithMany(p => p.Transactions)
+                .HasForeignKey(d => d.Type)
+                .OnDelete(DeleteBehavior.Restrict); // Transaction silinse bile TransactionType silinmez
+        });
+    }
+    private static void ConfigureTransactionTypeEntity(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<TransactionType>(entity =>
+        {
+            entity.HasKey(e => e.TypeId);
+            entity.HasIndex(e => e.Name).IsUnique();
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
     }
 
@@ -214,11 +242,11 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<InstallmentDefinition>(entity =>
         {
             entity.HasKey(e => e.InstallmentDefinitionId);
-            
+
             entity.Property(e => e.Description)
                 .IsRequired()
                 .HasMaxLength(200);
-                
+
             entity.Property(e => e.MonthlyAmount)
                 .HasPrecision(18, 2);
 
@@ -268,11 +296,27 @@ public class AppDbContext : DbContext
         foreach (var entityEntry in entries)
         {
             var auditable = (IAuditable)entityEntry.Entity;
+            // UTC olarak ayarla
             auditable.UpdatedAt = DateTime.UtcNow;
 
             if (entityEntry.State == EntityState.Added)
             {
                 auditable.CreatedAt = DateTime.UtcNow;
+            }
+        }
+
+        // DateTime alanlarını UTC'ye çevir
+        var dateTimeEntries = ChangeTracker.Entries()
+            .SelectMany(e => e.Properties)
+            .Where(p => p.CurrentValue != null && 
+                       (p.Metadata.ClrType == typeof(DateTime) || 
+                        p.Metadata.ClrType == typeof(DateTime?)));
+
+        foreach (var property in dateTimeEntries)
+        {
+            if (property.CurrentValue is DateTime dateTime && dateTime.Kind == DateTimeKind.Unspecified)
+            {
+                property.CurrentValue = DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
             }
         }
 

@@ -1,5 +1,4 @@
-namespace BudgetApp.Api.Core.Enums;
-
+// Core/Enums/TransactionTypeEnum.cs
 public enum TransactionTypeEnum
 {
     HARCAMA,

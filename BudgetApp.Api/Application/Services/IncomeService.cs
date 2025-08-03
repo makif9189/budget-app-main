@@ -2,7 +2,6 @@ using AutoMapper;
 using BudgetApp.Api.Core.DTOs;
 using BudgetApp.Api.Core.DTOs.Common;
 using BudgetApp.Api.Core.Entities;
-using BudgetApp.Api.Core.Enums;
 using BudgetApp.Api.Core.Interfaces.Repositories;
 using BudgetApp.Api.Core.Interfaces.Services;
 using BudgetApp.Api.Core.Interfaces;
@@ -63,7 +62,7 @@ public class IncomeService : IIncomeService
                 TransactionDate = incomeItem.TransactionDate,
                 Description = incomeItem.Description ?? "Income",
                 Amount = incomeItem.Amount,
-                Type = TransactionTypeEnum.GELIR,
+                Type = 1,
                 IncomeItemId = incomeItem.IncomeItemId
             };
 

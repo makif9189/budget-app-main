@@ -2,7 +2,6 @@ using AutoMapper;
 using BudgetApp.Api.Core.DTOs;
 using BudgetApp.Api.Core.DTOs.Common;
 using BudgetApp.Api.Core.Entities;
-using BudgetApp.Api.Core.Enums;
 using BudgetApp.Api.Core.Interfaces.Repositories;
 using BudgetApp.Api.Core.Interfaces.Services;
 using BudgetApp.Api.Core.Interfaces;
@@ -63,7 +62,7 @@ public class ExpenseService : IExpenseService
                 TransactionDate = expenseItem.TransactionDate,
                 Description = expenseItem.Description ?? "Expense",
                 Amount = expenseItem.Amount,
-                Type = TransactionTypeEnum.HARCAMA,
+                Type = 2,
                 ExpenseItemId = expenseItem.ExpenseItemId
             };
 

@@ -87,10 +87,10 @@ public class MappingProfile : Profile
         // Transaction mappings
         CreateMap<Transaction, TransactionDto>()
             .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()))
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description ?? string.Empty))
             .ForMember(dest => dest.CategoryOrSource, opt => opt.MapFrom(src =>
-                src.Type == Enums.TransactionTypeEnum.GELIR
+                src.Type == 1
                     ? (src.IncomeItem != null ? src.IncomeItem.IncomeSource.Name : "Bilinmeyen Gelir")
                     : (src.ExpenseItem != null ? src.ExpenseItem.ExpenseCategory.Name : "Genel Gider")));
     }

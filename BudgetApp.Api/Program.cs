@@ -10,9 +10,6 @@ using BudgetApp.Api.Core.Constants;
 using Serilog;
 using BudgetApp.Api.Presentation.Extensions;
 using Npgsql;
-using BudgetApp.Api.Core.Enums;
-
-NpgsqlConnection.GlobalTypeMapper.MapEnum<TransactionTypeEnum>("transaction_type_enum");
 
 var builder = WebApplication.CreateBuilder(args);
 
