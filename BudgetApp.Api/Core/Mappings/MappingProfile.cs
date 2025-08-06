@@ -95,7 +95,25 @@ public class MappingProfile : Profile
                     : (src.Type == 2 && src.ExpenseItem != null && src.ExpenseItem.ExpenseCategory != null
                     ? src.ExpenseItem.ExpenseCategory.Name
                     : "Diğer")));
-                    //? (src.IncomeItem != null ? src.IncomeItem.IncomeSource.Name : "Bilinmeyen Gelir")
-                    //: (src.ExpenseItem != null ? src.ExpenseItem.ExpenseCategory.Name : "Genel Gider")));
+        //? (src.IncomeItem != null ? src.IncomeItem.IncomeSource.Name : "Bilinmeyen Gelir")
+        //: (src.ExpenseItem != null ? src.ExpenseItem.ExpenseCategory.Name : "Genel Gider")));
+
+        // ExpenseCategory mappings
+        CreateMap<ExpenseCategory, ExpenseCategoryDto>();
+        CreateMap<ExpenseCategoryDto, ExpenseCategory>()
+            .ForMember(dest => dest.UserId, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.User, opt => opt.Ignore())
+            .ForMember(dest => dest.ExpenseItems, opt => opt.Ignore());
+
+        // IncomeSource mappings  
+        CreateMap<IncomeSource, IncomeSourceDto>();
+        CreateMap<IncomeSourceDto, IncomeSource>()
+            .ForMember(dest => dest.UserId, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.User, opt => opt.Ignore())
+            .ForMember(dest => dest.IncomeItems, opt => opt.Ignore());
     }
 }

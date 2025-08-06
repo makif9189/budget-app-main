@@ -33,7 +33,7 @@ public class ExpenseService : IExpenseService
         {
             var expenses = await _expenseRepository.GetByUserIdWithCategoryAsync(userId);
             var expenseDtos = _mapper.Map<IEnumerable<ExpenseDto>>(expenses);
-            
+
             return ApiResponse<IEnumerable<ExpenseDto>>.SuccessResult(expenseDtos);
         }
         catch (Exception ex)
@@ -74,7 +74,7 @@ public class ExpenseService : IExpenseService
             // Get the created expense with category info
             var createdExpense = await _expenseRepository.GetByUserIdWithCategoryAsync(userId);
             var result = createdExpense.FirstOrDefault(e => e.ExpenseItemId == expenseItem.ExpenseItemId);
-            
+
             if (result != null)
             {
                 var expenseDto_result = _mapper.Map<ExpenseDto>(result);
@@ -89,4 +89,28 @@ public class ExpenseService : IExpenseService
             return ApiResponse<ExpenseDto>.ErrorResult($"Failed to create expense: {ex.Message}");
         }
     }
+    
+    public async Task<ApiResponse<IEnumerable<ExpenseCategoryDto>>> GetExpenseCategoriesAsync(int userId)
+{
+    try
+    {
+        // Varsayılan kategoriler - gerçek uygulamada veritabanından gelecek
+        var categories = new List<ExpenseCategoryDto>
+        {
+            new() { ExpenseCategoryId = 1, Name = "Kira" },
+            new() { ExpenseCategoryId = 2, Name = "Market" },
+            new() { ExpenseCategoryId = 3, Name = "Ulaşım" },
+            new() { ExpenseCategoryId = 4, Name = "Faturalar" },
+            new() { ExpenseCategoryId = 5, Name = "Sağlık" },
+            new() { ExpenseCategoryId = 6, Name = "Eğlence" },
+            new() { ExpenseCategoryId = 7, Name = "Diğer" }
+        };
+
+        return ApiResponse<IEnumerable<ExpenseCategoryDto>>.SuccessResult(categories);
+    }
+    catch (Exception ex)
+    {
+        return ApiResponse<IEnumerable<ExpenseCategoryDto>>.ErrorResult($"Failed to get expense categories: {ex.Message}");
+    }
+}
 }

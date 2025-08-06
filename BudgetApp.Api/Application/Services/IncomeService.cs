@@ -33,7 +33,7 @@ public class IncomeService : IIncomeService
         {
             var incomes = await _incomeRepository.GetByUserIdWithSourceAsync(userId);
             var incomeDtos = _mapper.Map<IEnumerable<IncomeDto>>(incomes);
-            
+
             return ApiResponse<IEnumerable<IncomeDto>>.SuccessResult(incomeDtos);
         }
         catch (Exception ex)
@@ -74,7 +74,7 @@ public class IncomeService : IIncomeService
             // Get the created income with source info
             var createdIncomes = await _incomeRepository.GetByUserIdWithSourceAsync(userId);
             var result = createdIncomes.FirstOrDefault(i => i.IncomeItemId == incomeItem.IncomeItemId);
-            
+
             if (result != null)
             {
                 var incomeDto_result = _mapper.Map<IncomeDto>(result);
@@ -89,4 +89,25 @@ public class IncomeService : IIncomeService
             return ApiResponse<IncomeDto>.ErrorResult($"Failed to create income: {ex.Message}");
         }
     }
+    
+    public async Task<ApiResponse<IEnumerable<IncomeSourceDto>>> GetIncomeSourcesAsync(int userId)
+{
+    try
+    {
+        var sources = new List<IncomeSourceDto>
+        {
+            new() { IncomeSourceId = 1, Name = "Maaş" },
+            new() { IncomeSourceId = 2, Name = "Freelance" },
+            new() { IncomeSourceId = 3, Name = "Yatırım" },
+            new() { IncomeSourceId = 4, Name = "Fatura Yardımı" },
+            new() { IncomeSourceId = 5, Name = "Diğer" }
+        };
+
+        return ApiResponse<IEnumerable<IncomeSourceDto>>.SuccessResult(sources);
+    }
+    catch (Exception ex)
+    {
+        return ApiResponse<IEnumerable<IncomeSourceDto>>.ErrorResult($"Failed to get income sources: {ex.Message}");
+    }
+}
 }

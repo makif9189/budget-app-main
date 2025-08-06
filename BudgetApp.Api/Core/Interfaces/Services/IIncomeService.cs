@@ -7,4 +7,5 @@ public interface IIncomeService
 {
     Task<ApiResponse<IEnumerable<IncomeDto>>> GetIncomesByUserIdAsync(int userId);
     Task<ApiResponse<IncomeDto>> CreateIncomeAsync(int userId, CreateIncomeDto incomeDto);
+    Task<ApiResponse<IEnumerable<IncomeSourceDto>>> GetIncomeSourcesAsync(int userId);
 }

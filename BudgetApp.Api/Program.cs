@@ -102,15 +102,28 @@ builder.Services.AddSwaggerGen(options =>
 // Add CORS (if needed)
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigins", policy =>
+    options.AddPolicy("AllowAngularApp", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "https://localhost:3000") // React app
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        policy.WithOrigins(
+                "http://localhost:4200",    // Angular dev server
+                "https://localhost:4200",   // Angular dev server (HTTPS)
+                "http://localhost:3000",    // Alternatif port
+                "https://localhost:3000"    // Alternatif port (HTTPS)
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+
+    // Production için ayrı bir policy
+    options.AddPolicy("Production", policy =>
+    {
+        policy.WithOrigins("https://your-angular-app-domain.com") // Production domain'inizi buraya ekleyin
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
-
 // Add health checks
 builder.Services.AddHealthChecks()
     .AddNpgSql(connectionString);
@@ -120,6 +133,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors("AllowAngularApp");
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
@@ -127,6 +141,18 @@ if (app.Environment.IsDevelopment())
         c.DisplayRequestDuration();
         c.EnableTryItOutByDefault();
     });
+}
+else
+{
+    app.UseCors("Production");
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Secure Budget App API v1");
+        c.DisplayRequestDuration();
+        c.EnableTryItOutByDefault();
+    });
+
 }
 
 // Add security headers
@@ -153,5 +179,9 @@ app.MapCreditCardEndpoints();
 app.MapExpenseEndpoints();
 app.MapIncomeEndpoints();
 app.MapTransactionEndpoints();
+app.MapCategoryEndpoints();
+app.MapDashboardEndpoints();
+app.MapCategoryEndpoints(); 
+app.MapLookupEndpoints();
 
 app.Run();

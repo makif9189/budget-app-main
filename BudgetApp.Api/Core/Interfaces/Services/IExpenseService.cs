@@ -7,4 +7,5 @@ public interface IExpenseService
 {
     Task<ApiResponse<IEnumerable<ExpenseDto>>> GetExpensesByUserIdAsync(int userId);
     Task<ApiResponse<ExpenseDto>> CreateExpenseAsync(int userId, CreateExpenseDto expenseDto);
+    Task<ApiResponse<IEnumerable<ExpenseCategoryDto>>> GetExpenseCategoriesAsync(int userId);
 }

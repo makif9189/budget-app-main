@@ -21,6 +21,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IExpenseService, ExpenseService>();
         services.AddScoped<IIncomeService, IncomeService>();
         services.AddScoped<ITransactionService, TransactionService>();
+        services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<ICategoryService, CategoryService>();
 
         // Register FluentValidation Validators
         services.AddScoped<IValidator<RegisterDto>, RegisterDtoValidator>();
